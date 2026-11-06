@@ -1,0 +1,32 @@
+{
+  "derived_from_evidence": "ev_846d732d45cc0c01d310e730e8fbb857e6963be6eb626d693e04e863545bd335",
+  "analyzer": "rea-agents 6.7.0",
+  "repository_reviewed": "https://github.com/morluto/rea",
+  "source_urls": [
+    "https://cleanshot.com/features",
+    "https://cleanshot.com/_nuxt/0UUDQsxc.js"
+  ],
+  "root_artifact_sha256": "4384485318bdb3972ed33a29003ee842d0a06cc14e7dfd3fef13a6a0b94cdb28",
+  "statistics": {
+    "relevant_files": 2,
+    "nested_asar_containers": 0,
+    "text_bytes_read": 246961,
+    "invalid_utf8_files": 0,
+    "parsed_javascript_files": 1,
+    "skipped_javascript_files": 0,
+    "visited_ast_nodes": 35922,
+    "findings": 749,
+    "modules": 0,
+    "parse_failures": 0
+  },
+  "limitations": [
+    "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+    "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+    "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+    "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+    "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+    "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code.",
+    "features.html has 3 inline JavaScript bodies starting at lines 1, 1, 8 that were not analyzed; endpoints, storage, imports and other facts in them are absent from the evidence."
+  ],
+  "scope": "Static public marketing website analysis only. Native CleanShot X binary not provided. No native implementation claims follow from website evidence."
+}
