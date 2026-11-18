@@ -20,7 +20,7 @@ Command executed (before renaming the local project from Frame to Stillframe):
 ```sh
 node /private/tmp/frame-rea-tools/node_modules/rea-agents/scripts/rea.mjs \
   analyze-javascript-application \
-  /Users/kartikjain/Desktop/code/bufferbrew/apple/Frame/Research/site --json
+  /Users/kartikjain/Desktop/code/apple/Frame/Research/site --json
 ```
 
 The initial sandboxed run failed because REA's macOS process helper could not compile into the user compiler cache. The approved run with normal compiler-cache access completed with exit code 0. This was static, read-only target analysis.
