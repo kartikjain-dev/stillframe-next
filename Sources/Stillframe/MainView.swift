@@ -35,7 +35,6 @@ struct MainView: View {
         .frame(minWidth: 800, minHeight: 560)
         .alert("Stillframe needs your attention", isPresented: Binding(get: { store.error != nil }, set: { if !$0 { store.error = nil } })) {
             Button("OK", role: .cancel) { store.error = nil }
-            Button("Open Privacy Settings") { NSWorkspace.shared.open(URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture")!) }
         } message: { Text(store.error ?? "") }
         .alert("Delete this capture?", isPresented: $confirmDelete) {
             Button("Delete", role: .destructive) { store.removeSelected() }
@@ -81,7 +80,8 @@ struct MainView: View {
             Button { store.capture("area") } label: { Label("Area", systemImage: "selection.pin.in.out") }.help("Capture an area · " + shortcut(1))
             Button { store.capture("window") } label: { Label("Window", systemImage: "macwindow") }
             Button { store.capture("screen") } label: { Label("Screen", systemImage: "display") }.help("Capture main display · " + shortcut(2))
-            Button(action: startScrolling) { Label("Scroll", systemImage: "scroll") }.help("Join a scrolling region into one image")
+            Button(action: startScrolling) { Label("Scroll", systemImage: "scroll") }
+                .help("Capture a full browser page, Word document, or other scrolling region")
             Menu {
                 Picker("Capture delay", selection: $store.delay) {
                     Text("No delay").tag(0); Text("3 seconds").tag(3); Text("5 seconds").tag(5); Text("10 seconds").tag(10)

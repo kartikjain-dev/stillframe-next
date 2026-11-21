@@ -197,14 +197,16 @@ final class CaptureStore: ObservableObject {
         undoStack.append(current); restore(next)
     }
     func copyImage() {
-        guard let rendered else { return }
-        guard let png = ImageRenderer.png(rendered) else { error = "Could not copy the captured image."; return }
+        notice = writeImageToClipboard() ? "Screenshot copied to clipboard" : "Couldn’t copy the image. Use Export to save a file."
+    }
+    private func writeImageToClipboard() -> Bool {
+        guard let rendered, let bitmap = ImageRenderer.bitmap(rendered),
+              let png = bitmap.representation(using: .png, properties: [:]) else { return false }
         let item = NSPasteboardItem()
-        item.setData(png, forType: .png)
-        if let tiff = rendered.tiffRepresentation { item.setData(tiff, forType: .tiff) }
+        guard item.setData(png, forType: .png) else { return false }
+        if let tiff = bitmap.tiffRepresentation { item.setData(tiff, forType: .tiff) }
         pasteboard.clearContents()
-        guard pasteboard.writeObjects([item]) else { error = "The clipboard is currently unavailable."; return }
-        notice = "Screenshot copied to clipboard"
+        return pasteboard.writeObjects([item])
     }
     func export() {
         guard let selected else { return }
@@ -259,7 +261,9 @@ final class CaptureStore: ObservableObject {
         revision += 1; persist()
     }
     func didCapture() {
-        copyImage()
+        notice = writeImageToClipboard()
+            ? "Screenshot copied to clipboard"
+            : "Screenshot saved to the library. Couldn’t copy it to the clipboard."
         if preferences.openEditorAfterCapture { onShow?() } else { onCapture?() }
     }
     func rename(_ title: String) {

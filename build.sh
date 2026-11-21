@@ -33,5 +33,5 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </dict></array>
 </dict></plist>
 PLIST
-codesign --force --sign - "$APP"
+codesign --force --sign "${STILLFRAME_SIGNING_IDENTITY:--}" "$APP"
 echo "Built $APP"

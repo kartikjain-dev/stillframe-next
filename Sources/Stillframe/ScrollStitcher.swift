@@ -59,6 +59,11 @@ enum ScrollStitcher {
 
     static func join(_ previous: NSImage, _ next: NSImage, manualOverlap: Int? = nil) throws -> NSImage {
         guard let a = ImageRenderer.bitmap(previous)?.cgImage, let b = ImageRenderer.bitmap(next)?.cgImage else { throw StitchError.invalidImage }
+        let joined = try join(a, b, manualOverlap: manualOverlap)
+        return NSImage(cgImage: joined, size: NSSize(width: joined.width, height: joined.height))
+    }
+
+    static func join(_ a: CGImage, _ b: CGImage, manualOverlap: Int? = nil) throws -> CGImage {
         guard a.width == b.width, a.height >= b.height else { throw StitchError.dimensions }
         let overlap: Int
         if let manualOverlap {
@@ -71,12 +76,13 @@ enum ScrollStitcher {
         let added = b.height - overlap, height = a.height + added
         guard height <= 80000000 / a.width else { throw StitchError.tooLarge }
         guard let tail = b.cropping(to: CGRect(x: 0, y: overlap, width: b.width, height: added)) else { throw StitchError.invalidImage }
-        let image = NSImage(size: NSSize(width: a.width, height: height), flipped: true) { _ in
-            NSImage(cgImage: a, size: NSSize(width: a.width, height: a.height)).draw(in: NSRect(x: 0, y: 0, width: a.width, height: a.height), from: .zero, operation: .copy, fraction: 1, respectFlipped: true, hints: nil)
-            NSImage(cgImage: tail, size: NSSize(width: b.width, height: added)).draw(in: NSRect(x: 0, y: a.height, width: b.width, height: added), from: .zero, operation: .copy, fraction: 1, respectFlipped: true, hints: nil)
-            return true
-        }
-        guard let png = ImageRenderer.png(image), let flattened = NSImage(data: png) else { throw StitchError.invalidImage }
-        return flattened
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB),
+              let context = CGContext(data: nil, width: a.width, height: height, bitsPerComponent: 8,
+                                      bytesPerRow: 0, space: colorSpace,
+                                      bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else { throw StitchError.invalidImage }
+        context.draw(a, in: CGRect(x: 0, y: added, width: a.width, height: a.height))
+        context.draw(tail, in: CGRect(x: 0, y: 0, width: b.width, height: added))
+        guard let joined = context.makeImage() else { throw StitchError.invalidImage }
+        return joined
     }
 }
